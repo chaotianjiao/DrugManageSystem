@@ -61,7 +61,7 @@ class Ui_MainWindow(object):
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
         self.label_2.setEnabled(True)
         self.label_2.setGeometry(QtCore.QRect(150, 90, 521, 281))
-        self.label_2.setStyleSheet("image: url(:/C:/Users/feng.yuzhang/Desktop/timg.jpg);")
+        self.label_2.setStyleSheet("image: url(timg.jpg);")
         self.label_2.setText("")
         self.label_2.setObjectName("label_2")
         self.label = QtWidgets.QLabel(self.centralwidget)
