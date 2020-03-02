@@ -1,19 +1,20 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'buy.ui'
+# Form implementation generated from reading ui file 'sell.ui'
 #
 # Created by: PyQt5 UI code generator 5.13.0
 #
 # WARNING! All changes made in this file will be lost!
-
+import sys
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QApplication, QMainWindow
 
 
-class Ui_MainWindow(object):
+class sell_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(848, 608)
+        MainWindow.resize(840, 602)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.label = QtWidgets.QLabel(self.centralwidget)
@@ -26,15 +27,15 @@ class Ui_MainWindow(object):
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
         self.label_2.setGeometry(QtCore.QRect(120, 70, 600, 100))
         self.label_2.setText("")
-        self.label_2.setPixmap(QtGui.QPixmap("11.jpg"))
+        self.label_2.setPixmap(QtGui.QPixmap("../picture/11.jpg"))
         self.label_2.setObjectName("label_2")
         self.label_3 = QtWidgets.QLabel(self.centralwidget)
         self.label_3.setGeometry(QtCore.QRect(120, 430, 600, 100))
         self.label_3.setText("")
-        self.label_3.setPixmap(QtGui.QPixmap("22.jpg"))
+        self.label_3.setPixmap(QtGui.QPixmap("../picture/22.jpg"))
         self.label_3.setObjectName("label_3")
         self.widget = QtWidgets.QWidget(self.centralwidget)
-        self.widget.setGeometry(QtCore.QRect(0, 180, 841, 241))
+        self.widget.setGeometry(QtCore.QRect(50, 180, 741, 241))
         self.widget.setObjectName("widget")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.widget)
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
@@ -128,7 +129,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.tableView)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 848, 23))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 840, 23))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
@@ -141,14 +142,22 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.label.setText(_translate("MainWindow", "采购管理"))
-        self.pushButton_2.setText(_translate("MainWindow", "采购计划制定"))
-        self.pushButton.setText(_translate("MainWindow", "采购药品信息查询"))
-        self.pushButton_4.setText(_translate("MainWindow", "采购账目查询"))
-        self.pushButton_7.setText(_translate("MainWindow", "供货商信息查询"))
-        self.pushButton_6.setText(_translate("MainWindow", "药品结算"))
-        self.pushButton_5.setText(_translate("MainWindow", "采购药品入库"))
-        self.pushButton_3.setText(_translate("MainWindow", "采购账目修改"))
-        self.pushButton_9.setText(_translate("MainWindow", "药品采购"))
-        self.pushButton_8.setText(_translate("MainWindow", "药品退货"))
-import sell_rc
+        self.label.setText(_translate("MainWindow", "销售管理"))
+        self.pushButton_2.setText(_translate("MainWindow", "药品调拨"))
+        self.pushButton.setText(_translate("MainWindow", "销售及退药"))
+        self.pushButton_4.setText(_translate("MainWindow", "退药查询"))
+        self.pushButton_7.setText(_translate("MainWindow", "库存管理"))
+        self.pushButton_6.setText(_translate("MainWindow", "销售账目管理"))
+        self.pushButton_5.setText(_translate("MainWindow", "药品拆分"))
+        self.pushButton_3.setText(_translate("MainWindow", "销售查询"))
+        self.pushButton_9.setText(_translate("MainWindow", "打折优惠"))
+        self.pushButton_8.setText(_translate("MainWindow", "促销"))
+
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    mainWindow = QMainWindow()
+    ui = sell_MainWindow()
+    ui.setupUi(mainWindow)
+    mainWindow.show()
+    sys.exit(app.exec_())
