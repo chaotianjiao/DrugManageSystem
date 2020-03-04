@@ -13,6 +13,7 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
         self.setupUi(self)
         # 加载逻辑函数代码
         self.initUI()
+        # 连接数据库
         self.connect = pymysql.connect(host='localhost',
                                        port=3306,
                                        user='root',
@@ -21,10 +22,6 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
                                        charset='utf8',
                                        cursorclass=pymysql.cursors.DictCursor)
         self.cursor = self.connect.cursor()
-        sql = "select * from drug_table where `drug_name` = '{}'".format('阿司匹林')
-        self.cursor.execute(sql)
-        # 取数据
-        data = self.cursor.fetchall()
 
     def initUI(self):
         # 连接采购药品信息查询按钮
@@ -48,7 +45,7 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
 
     def drug_information_click(self):
         # 获取药品名
-        drug_name, ok = QInputDialog.getText(self, "请输入要查询的药品名", "需要查询的药品名：")
+        drug_name, ok = QInputDialog.getText(self, "输入药品名", "需要查询的药品名：")
         if ok:
             # 执行查询
             sql = "select * from drug_table where `drug_name` = '{}'".format(drug_name)
@@ -61,7 +58,7 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
                 model.setVerticalHeaderLabels((['药品名称', '制造商', '生产时间', '保质期(年)']))
                 drug_name_show = QStandardItem(str(data[0]['drug_name']))
                 manufacturer_show = QStandardItem(str(data[0]['manufacturer']))
-                production_date_show =QStandardItem(str(data[0]['production_date']))
+                production_date_show = QStandardItem(str(data[0]['production_date']))
                 expiry_date_show = QStandardItem(str(data[0]['expiry_date']))
                 model.setItem(0, 0, drug_name_show)
                 model.setItem(1, 0, manufacturer_show)
@@ -72,13 +69,65 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
                 QMessageBox.about(self, '没有找到您要查询的药品', '请检查输入')
 
     def supply_information_click(self):
-        pass
+        # 获取厂商名
+        factory_name, ok = QInputDialog.getText(self, "输入厂商名", "需要查询的厂商名：")
+        if ok:
+            # 执行查询
+            sql = "select * from manufacturer_information_table where `factory_name` = '{}'".format(factory_name)
+            self.cursor.execute(sql)
+            # 取数据
+            data = self.cursor.fetchall()
+            if data:
+                # 设置显示模型
+                model = QStandardItemModel(3, 1)
+                model.setVerticalHeaderLabels((['厂商名称', '厂址', '主营产品']))
+                factory_name_show = QStandardItem(str(data[0]['factory_name']))
+                address_show = QStandardItem(str(data[0]['address']))
+                main_business_show = QStandardItem(str(data[0]['main_business']))
+                model.setItem(0, 0, factory_name_show)
+                model.setItem(1, 0, address_show)
+                model.setItem(2, 0, main_business_show)
+                self.tableView.setModel(model)
+            else:
+                QMessageBox.about(self, '没有找到您要查询的厂商', '请检查输入')
 
     def change_purchase_bill_click(self):
         pass
 
     def bill_information_click(self):
-        pass
+        # model不固定，依据数据库中的数据来确定
+        sql = 'select max(id) from bill_information_table'
+        self.cursor.execute(sql)
+        # 这里取表格的行列数
+        data = self.cursor.fetchall()
+        row = data[0]['max(id)']
+        model = QStandardItemModel(int(row) + 1, 4)
+        model.setHorizontalHeaderLabels(['药品名称', '单价', '数量','总价'])
+        # 这里取展示表的信息
+        sql_1 = 'select * from bill_information_table'
+        self.cursor.execute(sql_1)
+        data_1 = self.cursor.fetchall()
+        # 这里还没找到整张表导入的方法，暂时双循环遍历，效率可能有点低下
+        for a in range(row):
+            # 先取数值出来
+            drug_name_show = QStandardItem(str(data_1[a]['drug_name']))
+            price_show = QStandardItem(str(data_1[a]['price']))
+            number_show = QStandardItem(str(data_1[a]['number']))
+            total_show = QStandardItem(str(data_1[a]['total']))
+            model.setItem(a, 0, drug_name_show)
+            model.setItem(a, 1, price_show)
+            model.setItem(a, 2, number_show)
+            model.setItem(a, 3, total_show)
+        sql_2 ='select sum(number),sum(total) from bill_information_table'
+        self.cursor.execute(sql_2)
+        # 这里取总和（单价总和没有意义，所以没有计算）
+        data_2 = self.cursor.fetchall()
+        total_number = QStandardItem(str(data_2[0]['sum(number)']))
+        total_price = QStandardItem(str(data_2[0]['sum(total)']))
+        model.setItem(row, 0, QStandardItem('合计'))
+        model.setItem(row, 2, total_number)
+        model.setItem(row, 3, total_price)
+        self.tableView.setModel(model)
 
     def buy_plan_make_click(self):
         pass
