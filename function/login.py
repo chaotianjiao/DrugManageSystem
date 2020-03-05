@@ -16,7 +16,7 @@ class LoginWindow(QMainWindow, Login_MainWindow):
         self.user_input.setCompleter(QCompleter(self.complete))
         # 隐藏密码
         self.pwd_input.setEchoMode(QLineEdit.Password)
-        # 这里要初始化好两个窗口，否则会爆内存错误 Process fininshed code 17545645
+        # 这里要初始化好两个窗口，否则会报内存错误 Process fininshed code 17545645
         # 这个BUG改的我心累
         self.buy = Buy_MainWindow()
         self.sell = Sell_MainWindow()
@@ -26,7 +26,6 @@ class LoginWindow(QMainWindow, Login_MainWindow):
         user = self.user_input.text()
         pwd = self.pwd_input.text()
         if user == 'minmin' and pwd == 'piaoliang':
-            # 这里的buy定义在最下面的if main里面
             self.buy.show()
             self.close()
         elif user == 'minmin' and pwd == 'meili':
