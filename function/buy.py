@@ -107,19 +107,6 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
             # 显示修改窗口
             self.change.title.setText(self.change_drug_name)
             self.change.show()
-            # 获得输入数据
-
-
-            # print(new_price,new_number)
-            # 获得输入数据
-            # self.change.ok_btn.clicked.connect()
-            # new_price, new_number = self.change_ok_btn_click
-            # print(new_price, new_number)
-            # sql = 'UPDATE bill_information_table set `price` = "{}",`number` = "{}" where `drug_name`="{}"'.format(new_price,new_number,change_drug_name)
-            # self.cursor.execute(sql)
-            # self.cursor.commit()
-            # QMessageBox.about(self, '修改', '修改成功！')
-
 
     def bill_information_click(self):
         # model不固定，依据数据库中的数据来确定
@@ -190,12 +177,6 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
 
     def change_cancel_btn(self):
         self.change.close()
-
-
-
-
-
-
 
 
 # 以下为测试代码，可以不用管
