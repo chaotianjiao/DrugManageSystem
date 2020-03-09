@@ -3,6 +3,7 @@ from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from PyQt5.QtWidgets import QMainWindow, QApplication, QInputDialog, QMessageBox, QComboBox
 from ui_code.buy_ui import buy_MainWindow
 from function.change import ChangeMainWindow
+from function.buy_plan import BuyPlanMainWindow
 import pymysql
 
 
@@ -39,6 +40,11 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
         self.bill_information.clicked.connect(self.bill_information_click)
         # 连接采购计划制定按钮
         self.buy_plan_make.clicked.connect(self.buy_plan_make_click)
+        # 采购计划制定界面功能函数
+        self.buy_plan = BuyPlanMainWindow()
+        self.buy_plan.check_btn.clicked.connect(self.buy_plan_check_btn_click)
+        self.buy_plan.cancel_btn.clicked.connect(self.buy_plan_cancel_btn_click)
+
         # 连接采购药品入库按钮
         self.procurement_of_drugs.clicked.connect(self.procurement_of_drugs_click)
         # 连接药品结算按钮
@@ -175,8 +181,18 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
         except ValueError:
             QMessageBox.warning(self, '输入错误', '请检查输入')
 
+    # 修改界面取消按钮
     def change_cancel_btn(self):
         self.change.close()
+
+    # 制定界面确定按钮
+    def buy_plan_check_btn_click(self):
+        
+        pass
+
+    # 制定界面取消按钮
+    def buy_plan_cancel_btn_click(self):
+        self.buy_plan.close()
 
 
 # 以下为测试代码，可以不用管

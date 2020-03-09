@@ -42,7 +42,5 @@ if __name__ == '__main__':
     MainWindow = QMainWindow()
     ui = LoginWindow()
     ui.setupUi(MainWindow)
-    # buy = Buy_MainWindow()
-    # sell = Sell_MainWindow()
     MainWindow.show()
     sys.exit(app.exec_())
