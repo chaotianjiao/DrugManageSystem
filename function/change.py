@@ -7,6 +7,7 @@ class ChangeMainWindow(QMainWindow, change_MainWindow):
     def __init__(self):
         super(ChangeMainWindow, self).__init__()
         self.setupUi(self)
+        self.setWindowTitle('修改界面')
 
 
 # 以下为测试代码，可以不用管

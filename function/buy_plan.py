@@ -7,6 +7,7 @@ class BuyPlanMainWindow(QMainWindow, Buy_Plan_MainWindow):
     def __init__(self):
         super(BuyPlanMainWindow, self).__init__()
         self.setupUi(self)
+        self.setWindowTitle('采购计划制定界面')
 
 
 # 以下为测试代码，可以不用管

@@ -1,6 +1,10 @@
 import sys
-from PyQt5.QtGui import QStandardItemModel, QStandardItem
+
+from PyQt5 import QtGui
+from PyQt5.QtGui import QStandardItemModel, QStandardItem, QIntValidator, QDoubleValidator
 from PyQt5.QtWidgets import QMainWindow, QApplication, QInputDialog, QMessageBox, QComboBox
+from PyQt5.uic.properties import QtCore
+
 from ui_code.buy_ui import buy_MainWindow
 from function.change import ChangeMainWindow
 from function.buy_plan import BuyPlanMainWindow
@@ -26,6 +30,7 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
         self.cursor = self.connect.cursor()
 
     def initUI(self):
+        self.setWindowTitle('采购界面')
         # 连接采购药品信息查询按钮
         self.drug_information.clicked.connect(self.drug_information_click)
         # 连接供货商信息查询按钮
@@ -44,6 +49,7 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
         self.buy_plan = BuyPlanMainWindow()
         self.buy_plan.check_btn.clicked.connect(self.buy_plan_check_btn_click)
         self.buy_plan.cancel_btn.clicked.connect(self.buy_plan_cancel_btn_click)
+        self.buy_plan.total_label.mousePressEvent = self.buy_plan_total_label_click
 
         # 连接采购药品入库按钮
         self.procurement_of_drugs.clicked.connect(self.procurement_of_drugs_click)
@@ -150,7 +156,8 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
         self.tableView.setModel(model)
 
     def buy_plan_make_click(self):
-        pass
+        self.buy_plan.show()
+
 
     def procurement_of_drugs_click(self):
         pass
@@ -187,16 +194,38 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
 
     # 制定界面确定按钮
     def buy_plan_check_btn_click(self):
-        
+
         pass
 
-    # 制定界面取消按钮
     def buy_plan_cancel_btn_click(self):
         self.buy_plan.close()
 
+    # 这个灰色参数不要删除，否则会报错
+    def buy_plan_total_label_click(self, total_label):
+        drug_name_input = 'self.buy_plan.drug_name_input_'
+        price_input = 'self.buy_plan.price_input_'
+        number_input = 'self.buy_plan.number_input_'
+        total_input = 'self.buy_plan.total_input_'
+        limit_int = QIntValidator()
+        limit_int.setRange(1, 1000)
+        limit_double = QDoubleValidator()
+        limit_double.setRange(0.01, 999.99)
+        limit_double.setDecimals(2)
+        for a in range(1, 5):
+            # eval去掉字符串，变成正常的代码
+            if eval(drug_name_input + str(a)).text() != '':
+                eval(price_input + str(a)).setValidator(limit_double)
+                eval(number_input + str(a)).setValidator(limit_int)
+                get_price = eval(price_input + str(a)).text()
+                get_number = eval(number_input + str(a)).text()
+                # 保留小数点后两位显示
+                eval(total_input + str(a)).setText(str(round(float(get_price) * int(get_number), 2)))
+            else:
+                break
+
 
 # 以下为测试代码，可以不用管
-if __name__ == '__main__':
+if  __name__ == '__main__':
     app = QApplication(sys.argv)
     buy_ui = Buy_MainWindow()
     buy_ui.show()

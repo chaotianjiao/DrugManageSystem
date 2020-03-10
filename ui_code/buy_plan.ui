@@ -91,7 +91,7 @@
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="QLineEdit" name="price_input_1">
+      <widget class="QLineEdit" name="drug_name_input_1">
        <property name="font">
         <font>
          <family>楷体</family>
@@ -108,7 +108,7 @@
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QLineEdit" name="total_input_1">
+      <widget class="QLineEdit" name="price_input_1">
        <property name="font">
         <font>
          <family>楷体</family>
@@ -142,7 +142,7 @@
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-      <widget class="QLineEdit" name="drug_name_input_1">
+      <widget class="QLineEdit" name="total_input_1">
        <property name="font">
         <font>
          <family>楷体</family>
