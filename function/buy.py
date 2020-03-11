@@ -2,7 +2,7 @@ import sys
 
 from PyQt5 import QtGui
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QIntValidator, QDoubleValidator
-from PyQt5.QtWidgets import QMainWindow, QApplication, QInputDialog, QMessageBox, QComboBox
+from PyQt5.QtWidgets import QMainWindow, QApplication, QInputDialog, QMessageBox, QComboBox, QPushButton
 from PyQt5.uic.properties import QtCore
 
 from ui_code.buy_ui import buy_MainWindow
@@ -158,9 +158,22 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
     def buy_plan_make_click(self):
         self.buy_plan.show()
 
-
+    # 执行把计划里的表插入药品表
     def procurement_of_drugs_click(self):
-        pass
+        question = QMessageBox()
+        question.setWindowTitle('请确认')
+        question.setText('计划表合并到药品表，请确认')
+        question.addButton(QPushButton('确定'), QMessageBox.YesRole)
+        question.addButton(QPushButton('取消'), QMessageBox.NoRole)
+        question.exec_()
+        # 明天来接着写，这里把点击事件写进去
+        if QPushButton('确定').click():
+            sql = 'Insert into bill_information_table(`drug_name`,`price`,`number`,`total`) select `drug_name`,`price`,`number`,`total` from plan_table'
+            self.cursor.execute(sql)
+            self.connect.commit()
+        elif QPushButton('取消').click():
+            QMessageBox.close(self)
+        QMessageBox.about(self, '完成', '迁移完成')
 
     def drug_settlement_click(self):
         pass
@@ -194,8 +207,33 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
 
     # 制定界面确定按钮
     def buy_plan_check_btn_click(self):
-
-        pass
+        # 遍历吧，不想在eval了
+        drug_names = [self.buy_plan.drug_name_input_1.text(),
+                      self.buy_plan.drug_name_input_2.text(),
+                      self.buy_plan.drug_name_input_3.text(),
+                      self.buy_plan.drug_name_input_4.text()]
+        for index, drug_name in enumerate(drug_names, start=1):
+            # 好像还是要eval
+            if drug_name != '':
+                price = eval('self.buy_plan.price_input_' + '{}'.format(index)).text()
+                number = eval('self.buy_plan.number_input_' + '{}'.format(index)).text()
+                price = round(float(price),2)
+                number = int(number)
+                sql = 'Insert into plan_table (`drug_name`, `price`, `number`, `total`) VALUES ("{}","{}","{}","{}")'.format(drug_name,price,number,round(price*number, 2))
+                self.cursor.execute(sql)
+                self.connect.commit()
+            else:
+                break
+        # 把通知的确定按钮改成中文的
+        information = QMessageBox()
+        information.setWindowTitle('通知')
+        information.setText('执行成功')
+        information.addButton(QPushButton('确定'), QMessageBox.YesRole)
+        information.setSizeGripEnabled(True)
+        # 始终修改不了通知窗口的大小，先暂定这样
+        information.resize(1000, 200)
+        information.exec_()
+        self.buy_plan.close()
 
     def buy_plan_cancel_btn_click(self):
         self.buy_plan.close()
@@ -225,7 +263,7 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
 
 
 # 以下为测试代码，可以不用管
-if  __name__ == '__main__':
+if __name__ == '__main__':
     app = QApplication(sys.argv)
     buy_ui = Buy_MainWindow()
     buy_ui.show()
