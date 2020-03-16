@@ -8,6 +8,7 @@ from PyQt5.uic.properties import QtCore
 from ui_code.buy_ui import buy_MainWindow
 from function.change import ChangeMainWindow
 from function.buy_plan import BuyPlanMainWindow
+from function.qrcode import QR_MainWindow
 import pymysql
 
 
@@ -55,6 +56,7 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
         self.procurement_of_drugs.clicked.connect(self.procurement_of_drugs_click)
         # 连接药品结算按钮
         self.drug_settlement.clicked.connect(self.drug_settlement_click)
+        self.pay = QR_MainWindow()
         # 连接药品采购按钮
         self.drug_purchase.clicked.connect(self.drug_purchase_click)
         # 连接药品退货按钮
@@ -160,23 +162,21 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
 
     # 执行把计划里的表插入药品表
     def procurement_of_drugs_click(self):
-        question = QMessageBox()
-        question.setWindowTitle('请确认')
-        question.setText('计划表合并到药品表，请确认')
-        question.addButton(QPushButton('确定'), QMessageBox.YesRole)
-        question.addButton(QPushButton('取消'), QMessageBox.NoRole)
-        question.exec_()
-        # 明天来接着写，这里把点击事件写进去
-        if QPushButton('确定').click():
+        question = QMessageBox.question(self,'合并确认','是否合并')
+        # yes = question.addButton('确定', QMessageBox.YesRole)
+        # no = question.addButton('取消', QMessageBox.NoRole)
+
+        # 点击事件已经完成
+        if QMessageBox.Yes:
             sql = 'Insert into bill_information_table(`drug_name`,`price`,`number`,`total`) select `drug_name`,`price`,`number`,`total` from plan_table'
             self.cursor.execute(sql)
             self.connect.commit()
-        elif QPushButton('取消').click():
-            QMessageBox.close(self)
-        QMessageBox.about(self, '完成', '迁移完成')
+            QMessageBox.about(self, '完成', '合并完成')
+        else:
+            question.close()
 
     def drug_settlement_click(self):
-        pass
+        self.pay.show()
 
     def drug_purchase_click(self):
         pass
