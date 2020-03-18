@@ -179,10 +179,28 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
         self.pay.show()
 
     def drug_purchase_click(self):
-        pass
+        self.buy_plan.setWindowTitle('药品采购界面')
+        self.buy_plan.show()
 
     def drug_return_click(self):
-        pass
+        # 从数据库中取出药品名称并显示
+        sql = 'select `drug_name` from bill_information_table'
+        self.cursor.execute(sql)
+        drug_names = self.cursor.fetchall()
+        row = len(drug_names)
+        model = QStandardItemModel(row, 1)
+        model.setHorizontalHeaderLabels(['药品名称'])
+        for i in range(row):
+            drug_name = QStandardItem(str(drug_names[i]['drug_name']))
+            model.setItem(i, 0, drug_name)
+        self.tableView.setModel(model)
+        delete_drug_name, ok = QInputDialog.getText(self, "输入退货名", "确认退货名")
+        if ok:
+            delete_sql = 'DELETE FROM bill_information_table WHERE drug_name = "{}"'.format(delete_drug_name)
+            self.cursor.execute(delete_sql)
+            self.connect.commit()
+            QMessageBox.about(self, '刷新查看', '药品已删除')
+
 
     def change_ok_btn_click(self):
         # 获取新输入
