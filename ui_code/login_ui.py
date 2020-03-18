@@ -10,7 +10,7 @@ import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow
 
-from resource import login_rc
+from resource_file import login_rc
 
 
 class Login_MainWindow(object):

@@ -8,7 +8,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from resource import qrcode_rc
+from resource_file import qrcode_rc
 
 class Qrcode_Window(object):
     def setupUi(self, MainWindow):
