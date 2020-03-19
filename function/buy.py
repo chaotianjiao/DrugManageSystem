@@ -135,7 +135,7 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
         sql_1 = 'select * from bill_information_table'
         self.cursor.execute(sql_1)
         data_1 = self.cursor.fetchall()
-        # 这里还没找到整张表导入的方法，暂时双循环遍历，效率可能有点低下
+        # 单循环取值设置显示
         for a in range(row):
             # 先取数值出来
             drug_name_show = QStandardItem(str(data_1[a]['drug_name']))
@@ -162,13 +162,13 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
 
     # 执行把计划里的表插入药品表
     def procurement_of_drugs_click(self):
-        question = QMessageBox.question(self,'合并确认','是否合并')
+        question = QMessageBox.question(self, '合并确认', '是否合并')
         # yes = question.addButton('确定', QMessageBox.YesRole)
         # no = question.addButton('取消', QMessageBox.NoRole)
 
         # 点击事件已经完成
         if QMessageBox.Yes:
-            sql = 'Insert into bill_information_table(`drug_name`,`price`,`number`,`total`) select `drug_name`,`price`,`number`,`total` from plan_table'
+            sql = 'Insert into bill_information_table(`drug_name`, `price`, `number`, `total`) select `drug_name`, `price`, `number`, `total` from plan_table'
             self.cursor.execute(sql)
             self.connect.commit()
             QMessageBox.about(self, '完成', '合并完成')
@@ -200,7 +200,6 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
             self.cursor.execute(delete_sql)
             self.connect.commit()
             QMessageBox.about(self, '刷新查看', '药品已删除')
-
 
     def change_ok_btn_click(self):
         # 获取新输入

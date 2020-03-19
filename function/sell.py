@@ -1,7 +1,9 @@
 import sys
 
-from PyQt5.QtWidgets import QMainWindow, QApplication
+from PyQt5.QtGui import QStandardItemModel, QStandardItem
+from PyQt5.QtWidgets import QMainWindow, QApplication, QAbstractItemView, QTableView, QMessageBox, QAction
 from ui_code.sell_ui import sell_MainWindow
+import pymysql
 
 class Sell_MainWindow(QMainWindow, sell_MainWindow):
     def __init__(self):
@@ -9,6 +11,19 @@ class Sell_MainWindow(QMainWindow, sell_MainWindow):
         self.setupUi(self)
         self.setWindowTitle('销售界面')
         self.other()
+        self.connect = pymysql.connect(host='localhost',
+                                       port=3306,
+                                       user='root',
+                                       password='fyz98123',
+                                       db='pycharm',
+                                       charset='utf8',
+                                       cursorclass=pymysql.cursors.DictCursor)
+        self.cursor = self.connect.cursor()
+        # 添加退药删除按钮并增加
+        tool = self.addToolBar("退药操作")
+        self.action = QAction('退药删除', self)
+        tool.addAction(self.action)
+        tool.actionTriggered[QAction].connect(self.delete)
 
     def other(self):
         # 连接销售及退药按钮
@@ -31,7 +46,53 @@ class Sell_MainWindow(QMainWindow, sell_MainWindow):
         self.on_sale_btn.clicked.connect(self.on_sale_btn_click)
 
     def sell_and_return_btn_click(self):
-        pass
+        sql = 'select * from bill_information_table '
+        self.cursor.execute(sql)
+        all_data = self.cursor.fetchall()
+        self.data_length = len(all_data)
+        self.model = QStandardItemModel(self.data_length+1, 4)
+        self.model.setHorizontalHeaderLabels(['药品名称', '价格', '数量', '总价'])
+        for number in range(self.data_length):
+            drug_name_show = QStandardItem(str(all_data[number]['drug_name']))
+            price_show = QStandardItem(str(all_data[number]['price']))
+            number_show = QStandardItem(str(all_data[number]['number']))
+            total_show = QStandardItem(str(all_data[number]['total']))
+            self.model.setItem(number, 0, drug_name_show)
+            self.model.setItem(number, 1, price_show)
+            self.model.setItem(number, 2, number_show)
+            self.model.setItem(number, 3, total_show)
+
+        sql_total = 'select sum(number), sum(total) from bill_information_table'
+        self.cursor.execute(sql_total)
+        data_2 = self.cursor.fetchall()
+        total_number = QStandardItem(str(data_2[0]['sum(number)']))
+        total_price = QStandardItem(str(data_2[0]['sum(total)']))
+        self.model.setItem(self.data_length, 0, QStandardItem('合计'))
+        self.model.setItem(self.data_length, 2, total_number)
+        self.model.setItem(self.data_length, 3, total_price)
+        self.tableView.setModel(self.model)
+        # 设置只能选中一行
+        self.tableView.setSelectionMode(QAbstractItemView.SingleSelection)
+        # 设置内容不可编辑
+        self.tableView.setEditTriggers(QTableView.NoEditTriggers)
+        # 设置只有行选中
+        self.tableView.setSelectionBehavior(QAbstractItemView.SelectRows)
+
+    # 从数据库中删除，
+    def delete(self, action):
+        if action.text() == '退药删除':
+            context = self.tableView.selectionModel().selectedRows()
+            if context:
+                index = self.tableView.currentIndex()
+                # print(index.row())
+                self.model.removeRow(self.index.row())
+                sql = 'delete from bill_information_table where id = "{}"'.format(index.row() + 1)
+                self.cursor.execute(sql)
+                sql_1 = 'Insert into return_query_table select * from bill_information_table where id = "{}"'.format(index.row() + 1)
+                self.cursor.execute(sql_1)
+                self.connect.commit()
+
+                QMessageBox.about(self, '已删除该行', '重新点击按钮查询总价')
 
     def store_manage_btn_click(self):
         pass
@@ -57,7 +118,7 @@ class Sell_MainWindow(QMainWindow, sell_MainWindow):
     def on_sale_btn_click(self):
         pass
 
-    
+
 # 以下为测试代码，可以不用管
 if __name__ == '__main__':
     app = QApplication(sys.argv)
