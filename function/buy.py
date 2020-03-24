@@ -37,7 +37,8 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
         # 连接供货商信息查询按钮
         self.supply_information.clicked.connect(self.supply_information_click)
         # 连接采购账目修改按钮
-        self.change_purchase_bill.clicked.connect(self.change_purchase_bill_click)
+        self.change_purchase_bill.clicked.connect(
+            self.change_purchase_bill_click)
         # 修改界面
         self.change = ChangeMainWindow()
         self.change.ok_btn.clicked.connect(self.change_ok_btn_click)
@@ -49,11 +50,13 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
         # 采购计划制定界面功能函数
         self.buy_plan = BuyPlanMainWindow()
         self.buy_plan.check_btn.clicked.connect(self.buy_plan_check_btn_click)
-        self.buy_plan.cancel_btn.clicked.connect(self.buy_plan_cancel_btn_click)
+        self.buy_plan.cancel_btn.clicked.connect(
+            self.buy_plan_cancel_btn_click)
         self.buy_plan.total_label.mousePressEvent = self.buy_plan_total_label_click
 
         # 连接采购药品入库按钮
-        self.procurement_of_drugs.clicked.connect(self.procurement_of_drugs_click)
+        self.procurement_of_drugs.clicked.connect(
+            self.procurement_of_drugs_click)
         # 连接药品结算按钮
         self.drug_settlement.clicked.connect(self.drug_settlement_click)
         self.pay = QR_MainWindow()
@@ -67,17 +70,20 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
         drug_name, ok = QInputDialog.getText(self, "输入药品名", "需要查询的药品名：")
         if ok:
             # 执行查询
-            sql = "select * from drug_table where `drug_name` = '{}'".format(drug_name)
+            sql = "select * from drug_table where `drug_name` = '{}'".format(
+                drug_name)
             self.cursor.execute(sql)
             # 取数据
             data = self.cursor.fetchall()
             if data:
                 # 设置显示模型
                 model = QStandardItemModel(4, 1)
-                model.setVerticalHeaderLabels((['药品名称', '制造商', '生产时间', '保质期(年)']))
+                model.setVerticalHeaderLabels(
+                    (['药品名称', '制造商', '生产时间', '保质期(年)']))
                 drug_name_show = QStandardItem(str(data[0]['drug_name']))
                 manufacturer_show = QStandardItem(str(data[0]['manufacturer']))
-                production_date_show = QStandardItem(str(data[0]['production_date']))
+                production_date_show = QStandardItem(
+                    str(data[0]['production_date']))
                 expiry_date_show = QStandardItem(str(data[0]['expiry_date']))
                 model.setItem(0, 0, drug_name_show)
                 model.setItem(1, 0, manufacturer_show)
@@ -92,7 +98,8 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
         factory_name, ok = QInputDialog.getText(self, "输入厂商名", "需要查询的厂商名：")
         if ok:
             # 执行查询
-            sql = "select * from manufacturer_information_table where `factory_name` = '{}'".format(factory_name)
+            sql = "select * from manufacturer_information_table where `factory_name` = '{}'".format(
+                factory_name)
             self.cursor.execute(sql)
             # 取数据
             data = self.cursor.fetchall()
@@ -102,7 +109,8 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
                 model.setVerticalHeaderLabels((['厂商名称', '厂址', '主营产品']))
                 factory_name_show = QStandardItem(str(data[0]['factory_name']))
                 address_show = QStandardItem(str(data[0]['address']))
-                main_business_show = QStandardItem(str(data[0]['main_business']))
+                main_business_show = QStandardItem(
+                    str(data[0]['main_business']))
                 model.setItem(0, 0, factory_name_show)
                 model.setItem(1, 0, address_show)
                 model.setItem(2, 0, main_business_show)
@@ -115,8 +123,10 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
         self.cursor.execute(sql)
         data_of_drug_name = self.cursor.fetchall()
         # 取出药品名，并展现在下拉菜单中
-        drug_list = [data_of_drug_name[i]['drug_name'] for i in range(len(data_of_drug_name))]
-        self.change_drug_name, ok = QInputDialog.getItem(self, '选取药品', '药品', drug_list)
+        drug_list = [data_of_drug_name[i]['drug_name']
+                     for i in range(len(data_of_drug_name))]
+        self.change_drug_name, ok = QInputDialog.getItem(
+            self, '选取药品', '药品', drug_list)
         if self.change_drug_name and ok:
             # 显示修改窗口
             self.change.title.setText(self.change_drug_name)
@@ -130,7 +140,7 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
         data = self.cursor.fetchall()
         row = data[0]['max(id)']
         model = QStandardItemModel(int(row) + 1, 4)
-        model.setHorizontalHeaderLabels(['药品名称', '单价', '数量','总价'])
+        model.setHorizontalHeaderLabels(['药品名称', '单价', '数量', '总价'])
         # 这里取展示表的信息
         sql_1 = 'select * from bill_information_table'
         self.cursor.execute(sql_1)
@@ -160,20 +170,21 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
     def buy_plan_make_click(self):
         self.buy_plan.show()
 
-    # 执行把计划里的表插入药品表
+    # 执行把计划里的表插入药品表，默认Yes
     def procurement_of_drugs_click(self):
-        question = QMessageBox.question(self, '合并确认', '是否合并')
-        # yes = question.addButton('确定', QMessageBox.YesRole)
-        # no = question.addButton('取消', QMessageBox.NoRole)
-
+        question = QMessageBox.question(
+            self,
+            '合并确认',
+            '是否合并',
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.Yes)
         # 点击事件已经完成
-        if QMessageBox.Yes:
+        if question == QMessageBox.Yes:
+            # 如果点击Yes,则进行合并
             sql = 'Insert into bill_information_table(`drug_name`, `price`, `number`, `total`) select `drug_name`, `price`, `number`, `total` from plan_table'
             self.cursor.execute(sql)
             self.connect.commit()
             QMessageBox.about(self, '完成', '合并完成')
-        else:
-            question.close()
 
     def drug_settlement_click(self):
         self.pay.show()
@@ -196,7 +207,8 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
         self.tableView.setModel(model)
         delete_drug_name, ok = QInputDialog.getText(self, "输入退货名", "确认退货名")
         if ok:
-            delete_sql = 'DELETE FROM bill_information_table WHERE drug_name = "{}"'.format(delete_drug_name)
+            delete_sql = 'DELETE FROM bill_information_table WHERE drug_name = "{}"'.format(
+                delete_drug_name)
             self.cursor.execute(delete_sql)
             self.connect.commit()
             QMessageBox.about(self, '刷新查看', '药品已删除')
@@ -232,11 +244,16 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
         for index, drug_name in enumerate(drug_names, start=1):
             # 好像还是要eval
             if drug_name != '':
-                price = eval('self.buy_plan.price_input_' + '{}'.format(index)).text()
-                number = eval('self.buy_plan.number_input_' + '{}'.format(index)).text()
-                price = round(float(price),2)
+                price = eval(
+                    'self.buy_plan.price_input_' +
+                    '{}'.format(index)).text()
+                number = eval(
+                    'self.buy_plan.number_input_' +
+                    '{}'.format(index)).text()
+                price = round(float(price), 2)
                 number = int(number)
-                sql = 'Insert into plan_table (`drug_name`, `price`, `number`, `total`) VALUES ("{}","{}","{}","{}")'.format(drug_name,price,number,round(price*number, 2))
+                sql = 'Insert into plan_table (`drug_name`, `price`, `number`, `total`) VALUES ("{}","{}","{}","{}")'.format(
+                    drug_name, price, number, round(price * number, 2))
                 self.cursor.execute(sql)
                 self.connect.commit()
             else:
@@ -266,6 +283,7 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
         limit_double = QDoubleValidator()
         limit_double.setRange(0.01, 999.99)
         limit_double.setDecimals(2)
+        limit_double.StandardNotation = 1
         for a in range(1, 5):
             # eval去掉字符串，变成正常的代码
             if eval(drug_name_input + str(a)).text() != '':
@@ -274,7 +292,8 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
                 get_price = eval(price_input + str(a)).text()
                 get_number = eval(number_input + str(a)).text()
                 # 保留小数点后两位显示
-                eval(total_input + str(a)).setText(str(round(float(get_price) * int(get_number), 2)))
+                eval(total_input + str(a)
+                     ).setText(str(round(float(get_price) * int(get_number), 2)))
             else:
                 break
 
