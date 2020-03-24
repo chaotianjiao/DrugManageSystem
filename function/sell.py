@@ -78,21 +78,26 @@ class Sell_MainWindow(QMainWindow, sell_MainWindow):
         # 设置只有行选中
         self.tableView.setSelectionBehavior(QAbstractItemView.SelectRows)
 
-    # 从数据库中删除，
+    # 从数据库中删除逻辑函数
     def delete(self, action):
         if action.text() == '退药删除':
             context = self.tableView.selectionModel().selectedRows()
             if context:
-                index = self.tableView.currentIndex()
-                # print(index.row())
-                self.model.removeRow(self.index.row())
-                sql = 'delete from bill_information_table where id = "{}"'.format(index.row() + 1)
-                self.cursor.execute(sql)
-                sql_1 = 'Insert into return_query_table select * from bill_information_table where id = "{}"'.format(index.row() + 1)
-                self.cursor.execute(sql_1)
-                self.connect.commit()
+                # 获取选中的行数
+                self.index = self.tableView.currentIndex()
+                # 拿到行数的药品名
+                drug_name = self.index.data()
 
+                #  先插
+                sql_1 = 'insert into return_query_table SELECT * from bill_information_table WHERE `drug_name`  = "{}"'.format(drug_name)
+                self.cursor.execute(sql_1)
+                #  再删
+                sql = 'delete from bill_information_table where `drug_name` = "{}"'.format(drug_name)
+                self.cursor.execute(sql)
+                # 否则插入不进去
+                self.connect.commit()
                 QMessageBox.about(self, '已删除该行', '重新点击按钮查询总价')
+
 
     def store_manage_btn_click(self):
         pass
@@ -101,7 +106,32 @@ class Sell_MainWindow(QMainWindow, sell_MainWindow):
         pass
 
     def return_query_btn_click(self):
-        pass
+        # 查询退药的代码，跟上面的展示代码差不多
+        sql = 'select * from return_query_table '
+        self.cursor.execute(sql)
+        all_data = self.cursor.fetchall()
+        self.data_length = len(all_data)
+        model = QStandardItemModel(self.data_length + 1, 4)
+        model.setHorizontalHeaderLabels(['药品名称', '价格', '数量', '总价'])
+        for number in range(self.data_length):
+            drug_name_show = QStandardItem(str(all_data[number]['drug_name']))
+            price_show = QStandardItem(str(all_data[number]['price']))
+            number_show = QStandardItem(str(all_data[number]['number']))
+            total_show = QStandardItem(str(all_data[number]['total']))
+            model.setItem(number, 0, drug_name_show)
+            model.setItem(number, 1, price_show)
+            model.setItem(number, 2, number_show)
+            model.setItem(number, 3, total_show)
+
+        sql_total = 'select sum(number), sum(total) from return_query_table'
+        self.cursor.execute(sql_total)
+        data_2 = self.cursor.fetchall()
+        total_number = QStandardItem(str(data_2[0]['sum(number)']))
+        total_price = QStandardItem(str(data_2[0]['sum(total)']))
+        model.setItem(self.data_length, 0, QStandardItem('合计'))
+        model.setItem(self.data_length, 2, total_number)
+        model.setItem(self.data_length, 3, total_price)
+        self.tableView.setModel(model)
 
     def drug_allocate_btn_click(self):
         pass
