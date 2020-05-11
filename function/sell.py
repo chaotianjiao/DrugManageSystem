@@ -121,31 +121,7 @@ class Sell_MainWindow(QMainWindow, sell_MainWindow):
 
     @query
     def sell_and_return_btn_click(self):
-        # sql = 'select * from bill_information_table '
-        # self.cursor.execute(sql)
-        # all_data = self.cursor.fetchall()
-        # self.data_length = len(all_data)
-        # self.model = QStandardItemModel(self.data_length + 1, 4)
-        # self.model.setHorizontalHeaderLabels(['药品名称', '价格', '数量', '总价'])
-        # for number in range(self.data_length):
-        #     drug_name_show = QStandardItem(str(all_data[number]['drug_name']))
-        #     price_show = QStandardItem(str(all_data[number]['price']))
-        #     number_show = QStandardItem(str(all_data[number]['number']))
-        #     total_show = QStandardItem(str(all_data[number]['total']))
-        #     self.model.setItem(number, 0, drug_name_show)
-        #     self.model.setItem(number, 1, price_show)
-        #     self.model.setItem(number, 2, number_show)
-        #     self.model.setItem(number, 3, total_show)
-        #
-        # sql_total = 'select sum(number), sum(total) from bill_information_table'
-        # self.cursor.execute(sql_total)
-        # data_2 = self.cursor.fetchall()
-        # total_number = QStandardItem(str(data_2[0]['sum(number)']))
-        # total_price = QStandardItem(str(data_2[0]['sum(total)']))
-        # self.model.setItem(self.data_length, 0, QStandardItem('合计'))
-        # self.model.setItem(self.data_length, 2, total_number)
-        # self.model.setItem(self.data_length, 3, total_price)
-        # self.tableView.setModel(self.model)
+
         # 设置只能选中一行
         self.tableView.setSelectionMode(QAbstractItemView.SingleSelection)
         # 设置内容不可编辑

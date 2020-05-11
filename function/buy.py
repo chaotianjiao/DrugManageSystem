@@ -119,7 +119,7 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
                 QMessageBox.about(self, '没有找到您要查询的厂商', '请检查输入')
 
     def change_purchase_bill_click(self):
-        sql = "select drug_name from bill_information_table"
+        sql = "select drug_name from drug_table"
         self.cursor.execute(sql)
         data_of_drug_name = self.cursor.fetchall()
         # 取出药品名，并展现在下拉菜单中
