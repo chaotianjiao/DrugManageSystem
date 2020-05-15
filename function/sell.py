@@ -3,6 +3,7 @@ import sys
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from PyQt5.QtWidgets import QMainWindow, QApplication, QAbstractItemView, QTableView, QMessageBox, QAction, QInputDialog
 from ui_code.sell_ui import sell_MainWindow
+from function.show import ShowMainWindow
 import pymysql
 import decimal
 
@@ -43,6 +44,8 @@ def discount(func):
             self.model.setItem(self.data_length, 2, total_number)
             self.model.setItem(self.data_length, 3, total_price)
             self.tableView.setModel(self.model)
+            self.another_table.tableView.setModel(self.model)
+            self.another_table.show()
     return wrapper
 
 
@@ -74,6 +77,8 @@ def query(fuction_name):
         self.model.setItem(self.data_length, 2, total_number)
         self.model.setItem(self.data_length, 3, total_price)
         self.tableView.setModel(self.model)
+        self.another_table.tableView.setModel(self.model)
+        self.another_table.show()
     return wrapper
 
 class Sell_MainWindow(QMainWindow, sell_MainWindow):
@@ -95,6 +100,8 @@ class Sell_MainWindow(QMainWindow, sell_MainWindow):
         self.action = QAction('退药删除', self)
         tool.addAction(self.action)
         tool.actionTriggered[QAction].connect(self.delete)
+        # 添加跳转界面
+        self.another_table = ShowMainWindow()
 
     def other(self):
         # 连接销售及退药按钮

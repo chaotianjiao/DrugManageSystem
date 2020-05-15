@@ -9,6 +9,7 @@ from ui_code.buy_ui import buy_MainWindow
 from function.change import ChangeMainWindow
 from function.buy_plan import BuyPlanMainWindow
 from function.qrcode import QR_MainWindow
+from function.show import ShowMainWindow
 import pymysql
 
 
@@ -39,6 +40,8 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
         # 连接采购账目修改按钮
         self.change_purchase_bill.clicked.connect(
             self.change_purchase_bill_click)
+        # 展示界面
+        self.other_table_show = ShowMainWindow()
         # 修改界面
         self.change = ChangeMainWindow()
         self.change.ok_btn.clicked.connect(self.change_ok_btn_click)
@@ -66,6 +69,7 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
         self.drug_return.clicked.connect(self.drug_return_click)
 
     def drug_information_click(self):
+
         # 获取药品名
         drug_name, ok = QInputDialog.getText(self, "输入药品名", "需要查询的药品名：")
         if ok:
@@ -89,9 +93,11 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
                 model.setItem(1, 0, manufacturer_show)
                 model.setItem(2, 0, production_date_show)
                 model.setItem(3, 0, expiry_date_show)
+                self.other_table_show.tableView.setModel(model)
                 self.tableView.setModel(model)
             else:
                 QMessageBox.about(self, '没有找到您要查询的药品', '请检查输入')
+        self.other_table_show.show()
 
     def supply_information_click(self):
         # 获取厂商名
@@ -115,8 +121,10 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
                 model.setItem(1, 0, address_show)
                 model.setItem(2, 0, main_business_show)
                 self.tableView.setModel(model)
+                self.other_table_show.tableView.setModel(model)
             else:
                 QMessageBox.about(self, '没有找到您要查询的厂商', '请检查输入')
+        self.other_table_show.show()
 
     def change_purchase_bill_click(self):
         sql = "select drug_name from drug_table"
@@ -166,6 +174,9 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
         model.setItem(row, 2, total_number)
         model.setItem(row, 3, total_price)
         self.tableView.setModel(model)
+        # 同步显示
+        self.other_table_show.tableView.setModel(model)
+        self.other_table_show.show()
 
     def buy_plan_make_click(self):
         self.buy_plan.show()
@@ -205,6 +216,9 @@ class Buy_MainWindow(QMainWindow, buy_MainWindow):
             drug_name = QStandardItem(str(drug_names[i]['drug_name']))
             model.setItem(i, 0, drug_name)
         self.tableView.setModel(model)
+        self.other_table_show.tableView.setModel(model)
+        self.other_table_show.show()
+
         delete_drug_name, ok = QInputDialog.getText(self, "输入退货名", "确认退货名")
         if ok:
             delete_sql = 'DELETE FROM bill_information_table WHERE drug_name = "{}"'.format(

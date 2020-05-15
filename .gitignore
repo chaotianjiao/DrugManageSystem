@@ -1,0 +1,5 @@
+# Created by .ignore support plugin (hsz.mobi)
+.idea/shelf/
+function/__pycache__/
+resource_file/__pycache__/
+ui_code/__pycache__/
